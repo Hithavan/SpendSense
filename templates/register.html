@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Create Account - SpendSense{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5 col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h3 mb-4">Create account</h1>
+        {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+        <form method="post">
+          <label class="form-label" for="username">Username</label>
+          <input class="form-control mb-3" id="username" name="username" minlength="3" required autofocus>
+          <label class="form-label" for="password">Password</label>
+          <input class="form-control mb-3" id="password" name="password" type="password" minlength="8" required>
+          <label class="form-label" for="confirm_password">Confirm password</label>
+          <input class="form-control mb-4" id="confirm_password" name="confirm_password" type="password" minlength="8" required>
+          <button class="btn btn-primary w-100" type="submit">Create account</button>
+        </form>
+        <p class="text-center text-muted mt-4 mb-0">
+          Already registered? <a href="{{ url_for('login') }}">Sign in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

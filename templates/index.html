@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}SpendSense - Smarter Expense Tracking{% endblock %}
+{% block content %}
+<section class="welcome-hero">
+  <div class="welcome-copy">
+    <div class="welcome-mark"><i class="bi bi-wallet2"></i></div>
+    <p class="welcome-kicker">PERSONAL FINANCE, MADE CLEAR</p>
+    <h1>SpendSense</h1>
+    <p class="welcome-tagline">Your simple, smarter way to track and manage expenses</p>
+    <p class="welcome-description">Keep every purchase organized, understand your spending, and make better decisions with less effort.</p>
+    <div class="welcome-actions">
+      <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg"><i class="bi bi-box-arrow-in-right me-2"></i>Sign in</a>
+      <a href="{{ url_for('register') }}" class="btn btn-light btn-lg"><i class="bi bi-person-plus me-2"></i>Create account</a>
+    </div>
+    <div class="welcome-trust"><i class="bi bi-shield-check me-2"></i>Your expenses stay private to your account</div>
+  </div>
+  <div class="welcome-preview" aria-hidden="true">
+    <div class="preview-window">
+      <div class="preview-topline"><span></span><span></span><span></span></div>
+      <div class="preview-heading">Your spending at a glance</div>
+      <div class="preview-total">₹12,840 <small>this month</small></div>
+      <div class="preview-bars">
+        <span style="height: 52%"></span><span style="height: 78%"></span><span style="height: 42%"></span><span style="height: 92%"></span><span style="height: 64%"></span><span style="height: 82%"></span>
+      </div>
+      <div class="preview-labels"><span>Food</span><span>Travel</span><span>Other</span></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

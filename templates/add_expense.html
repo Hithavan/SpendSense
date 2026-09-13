@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Add Expense{% endblock %}
+{% block content %}
+<h2 class="mb-4">Add Expense</h2>
+
+<ul class="nav nav-tabs mb-4" id="addTabs">
+  <li class="nav-item">
+    <button class="nav-link active" data-tab="manual-tab"><i class="bi bi-pencil-square me-1"></i>Add Manually</button>
+  </li>
+  <li class="nav-item">
+    <button class="nav-link" data-tab="receipt-tab"><i class="bi bi-camera me-1"></i>Upload Receipt</button>
+  </li>
+</ul>
+
+<!-- Manual entry -->
+<div id="manual-tab" class="tab-pane">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form id="manualExpenseForm">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Amount (₹)</label>
+            <input type="number" step="0.01" min="0" class="form-control" name="amount" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Category</label>
+            <select class="form-select" name="category">
+              {% for c in categories %}
+              <option value="{{ c }}">{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Merchant</label>
+            <input type="text" class="form-control" name="merchant" placeholder="e.g. Cafe XYZ">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-control" name="date">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description" rows="2" placeholder="Optional notes"></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-4"><i class="bi bi-check2-circle me-1"></i>Save Expense</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Receipt upload -->
+<div id="receipt-tab" class="tab-pane d-none">
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title"><i class="bi bi-camera me-1"></i>Upload Receipt</h5>
+      <p class="text-muted small">JPG, JPEG or PNG, up to 8MB.</p>
+      <form id="receiptForm">
+        <input class="form-control mb-3" type="file" name="receipt" accept=".jpg,.jpeg,.png" required>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-magic me-1"></i>Extract Expense</button>
+        <span id="ocrLoading" class="ms-2 d-none">
+          <span class="spinner-border spinner-border-sm text-primary"></span> Reading receipt...
+        </span>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirmation screen -->
+  <div id="reviewCard" class="card shadow-sm d-none">
+    <div class="card-body">
+      <h5 class="card-title"><i class="bi bi-check2-square me-1"></i>Review Expense</h5>
+      <p class="text-muted small">OCR isn't perfect — please check these fields before saving.</p>
+      <div id="reviewWarning" class="alert alert-warning d-none"></div>
+      <form id="reviewForm">
+        <input type="hidden" name="receipt_image" id="reviewReceiptImage">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Merchant</label>
+            <input type="text" class="form-control" name="merchant" id="reviewMerchant">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Amount (₹)</label>
+            <input type="number" step="0.01" class="form-control" name="amount" id="reviewAmount" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-control" name="date" id="reviewDate">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Category</label>
+            <select class="form-select" name="category" id="reviewCategory">
+              {% for c in categories %}
+              <option value="{{ c }}">{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success mt-4"><i class="bi bi-check2-circle me-1"></i>Save Expense</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/add_expense.js') }}"></script>
+{% endblock %}
