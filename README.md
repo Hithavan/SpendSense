@@ -1,8 +1,6 @@
 # Smart Expense Tracker (Receipt OCR)
 
-A Flask expense tracker with manual entry and OCR-based receipt scanning
-(OpenCV preprocessing + Tesseract). No AI/LLM categorization in this build — all
-category detection is rule-based, per the current plan.
+SpendSense is a web-based expense management application that uses OCR to extract transaction details from receipt images and provides spending analytics through an interactive dashboard.
 
 ## Setup
 
