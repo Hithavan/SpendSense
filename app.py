@@ -32,6 +32,10 @@ def create_app():
     login_manager.init_app(app)
     app.register_blueprint(expense_bp)
 
+    @app.get("/health")
+    def health():
+        return jsonify({"status": "ok"})
+
     @login_manager.user_loader
     def load_user(user_id):
         return db.session.get(User, int(user_id))

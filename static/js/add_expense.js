@@ -20,7 +20,13 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         body: formData,
       });
-      const data = await response.json();
+      const responseText = await response.text();
+      let data = {};
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch (parseError) {
+        data.error = `Server returned an unexpected response (${response.status}).`;
+      }
 
       if (!response.ok) {
         showToast(data.error || "Could not read this receipt.", "error");
@@ -46,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
       reviewCard.classList.remove("d-none");
       showToast("Receipt read. Please review before saving.");
     } catch (err) {
-      showToast("We couldn't reach the server. Please try again.", "error");
+      showToast("The server is unavailable. Please refresh the page and try again.", "error");
     } finally {
       ocrLoading.classList.add("d-none");
     }
