@@ -10,6 +10,8 @@ Pipeline:
 import cv2
 import numpy as np
 import pytesseract
+import os
+import shutil
 from flask import current_app
 
 
@@ -47,8 +49,10 @@ def extract_text(image_path: str) -> str:
     """Run the full preprocessing + OCR pipeline and return the raw extracted text."""
     processed = preprocess_image(image_path)
     configured_command = current_app.config.get("TESSERACT_CMD")
-    if configured_command:
+    if configured_command and (os.path.isfile(configured_command) or shutil.which(configured_command)):
         pytesseract.pytesseract.tesseract_cmd = configured_command
+    else:
+        pytesseract.pytesseract.tesseract_cmd = shutil.which("tesseract") or "tesseract"
 
     try:
         text = pytesseract.image_to_string(processed)
