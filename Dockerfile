@@ -17,4 +17,4 @@ ENV TESSERACT_CMD=/usr/bin/tesseract
 
 EXPOSE 10000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:10000", "wsgi:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:10000", "--workers", "1", "--threads", "2", "--timeout", "120", "--max-requests", "50", "--max-requests-jitter", "10", "wsgi:app"]

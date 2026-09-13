@@ -15,6 +15,10 @@ import shutil
 from flask import current_app
 
 
+OCR_TARGET_WIDTH = 1000
+OCR_MAX_DIMENSION = 1600
+
+
 class OCRError(Exception):
     """Raised when OCR processing fails in a way the caller should handle gracefully."""
     pass
@@ -22,22 +26,25 @@ class OCRError(Exception):
 
 def preprocess_image(image_path: str) -> np.ndarray:
     """Load and clean up a receipt image so Tesseract can read it more reliably."""
-    image = cv2.imread(image_path)
+    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     if image is None:
         raise OCRError("Could not read the uploaded image. It may be corrupted or an unsupported format.")
 
     # Resize: upscale small images, cap very large ones (helps OCR accuracy + speed)
     height, width = image.shape[:2]
-    target_width = 1200
-    if width != target_width:
-        scale = target_width / width
-        image = cv2.resize(image, (target_width, int(height * scale)), interpolation=cv2.INTER_CUBIC)
-
-    # Grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    scale = OCR_TARGET_WIDTH / width if width < OCR_TARGET_WIDTH else 1
+    scaled_width = int(width * scale)
+    scaled_height = int(height * scale)
+    largest_dimension = max(scaled_width, scaled_height)
+    if largest_dimension > OCR_MAX_DIMENSION:
+        scale = OCR_MAX_DIMENSION / largest_dimension
+        scaled_width = int(scaled_width * scale)
+        scaled_height = int(scaled_height * scale)
+    if scaled_width != width or scaled_height != height:
+        image = cv2.resize(image, (scaled_width, scaled_height), interpolation=cv2.INTER_AREA)
 
     # Noise reduction
-    denoised = cv2.fastNlMeansDenoising(gray, h=10)
+    denoised = cv2.fastNlMeansDenoising(image, h=10)
 
     # Thresholding (Otsu's binarization works well for receipts)
     _, thresholded = cv2.threshold(denoised, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -60,6 +67,8 @@ def extract_text(image_path: str) -> str:
         raise OCRError(
             "Tesseract OCR is not installed or is not available on the server PATH."
         ) from error
+    finally:
+        del processed
 
     if not text or not text.strip():
         raise OCRError("We couldn't read this receipt clearly. Please upload a clearer image or enter the expense manually.")
